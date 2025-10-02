@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="service_instances_entries">
+        <item>1 Instance</item>
+        <item>2 Instances</item>
+        <item>3 Instances</item>
+        <item>4 Instances</item>
+        <item>5 Instances</item>
+    </array>
+
+    <array name="service_instances_values">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </array>
+</resources>

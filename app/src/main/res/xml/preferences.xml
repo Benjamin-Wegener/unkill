@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Service Configuration">
+
+        <ListPreference
+            android:key="service_instances"
+            android:title="@string/pref_instances_title"
+            android:summary="@string/pref_instances_summary"
+            android:entries="@array/service_instances_entries"
+            android:entryValues="@array/service_instances_values"
+            android:defaultValue="3" />
+
+        <SwitchPreferenceCompat
+            android:key="auto_restart"
+            android:title="@string/pref_auto_restart_title"
+            android:summary="@string/pref_auto_restart_summary"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="Battery Optimization">
+
+        <SwitchPreferenceCompat
+            android:key="battery_optimization"
+            android:title="@string/pref_battery_optimization_title"
+            android:summary="@string/pref_battery_optimization_summary"
+            android:defaultValue="true" />
+
+        <Preference
+            android:key="request_battery_optimization"
+            android:title="Request Battery Optimization Exemption"
+            android:summary="Allow Unkill to run without battery restrictions"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+
+        <Preference
+            android:key="version"
+            android:title="Version"
+            android:summary="1.0.0"
+            android:persistent="false" />
+
+        <Preference
+            android:key="about"
+            android:title="About Unkill"
+            android:summary="Android app resurrection framework"
+            android:persistent="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

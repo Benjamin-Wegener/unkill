@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary_color">#2196F3</color>
+    <color name="primary_dark_color">#1976D2</color>
+    <color name="primary_light_color">#64B5F6</color>
+    <color name="secondary_color">#FFC107</color>
+    <color name="secondary_dark_color">#FF8F00</color>
+    <color name="secondary_light_color">#FFE082</color>
+
+    <!-- Status colors -->
+    <color name="status_running">#4CAF50</color>
+    <color name="status_stopped">#F44336</color>
+    <color name="status_restarting">#FF9800</color>
+    <color name="status_idle">#9E9E9E</color>
+
+    <!-- Background colors -->
+    <color name="background_color">#FAFAFA</color>
+    <color name="surface_color">#FFFFFF</color>
+    <color name="error_color">#F44336</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="text_on_primary">#FFFFFF</color>
+</resources>
