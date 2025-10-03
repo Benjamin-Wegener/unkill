@@ -3,9 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Required permissions for app resurrection framework -->
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <!-- Query declarations for accessing protected apps -->
+    <queries>
+        <!-- Allow querying all packages for app protection functionality -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+        </intent>
+    </queries>
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"
+        tools:ignore="ForegroundServicePermission" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
@@ -31,38 +39,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Service instances for app resurrection -->
-        <service
-            android:name=".services.UnkillService1"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <service
-            android:name=".services.UnkillService2"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <service
-            android:name=".services.UnkillService3"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <service
-            android:name=".services.UnkillService4"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <service
-            android:name=".services.UnkillService5"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="specialUse" />
-
-        <!-- Service Manager -->
+        <!-- Service Manager - manages standalone APK services -->
         <service
             android:name=".services.UnkillServiceManager"
             android:enabled="true"

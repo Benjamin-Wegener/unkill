@@ -1,11 +1,17 @@
 package com.example.unkill.services
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.core.app.NotificationCompat
 import androidx.core.content.FileProvider
 import com.example.unkill.models.ServiceState
 import com.example.unkill.models.ServiceStatus
@@ -23,6 +29,8 @@ class UnkillServiceManager : Service() {
         const val ACTION_STOP_SERVICE = "com.example.unkill.STOP_SERVICE"
         const val ACTION_RESTART_SERVICE = "com.example.unkill.RESTART_SERVICE"
         const val EXTRA_SERVICE_ID = "service_id"
+        const val CHANNEL_ID = "unkill_service_manager"
+        const val NOTIFICATION_ID = 1000
 
         private val serviceStatuses = mutableMapOf<Int, ServiceStatus>()
         private val serviceJobs = mutableMapOf<Int, Job>()
@@ -33,7 +41,12 @@ class UnkillServiceManager : Service() {
 
         fun getInstance(context: android.content.Context): UnkillServiceManager {
             return instance ?: synchronized(this) {
-                instance ?: UnkillServiceManager().also { instance = it }
+                instance ?: UnkillServiceManager().also {
+                    instance = it
+                    // Start the service when getting the instance
+                    val intent = android.content.Intent(context, UnkillServiceManager::class.java)
+                    context.startService(intent)
+                }
             }
         }
 
@@ -50,27 +63,70 @@ class UnkillServiceManager : Service() {
         super.onCreate()
         Log.d(TAG, "UnkillServiceManager created")
 
+        createNotificationChannel()
+        
         // Initialize service statuses
         for (i in 1..5) {
             serviceStatuses[i] = ServiceStatus(
                 serviceId = i,
-                state = ServiceState.STOPPED
+                state = ServiceState.STOPPED,
+                startTime = System.currentTimeMillis(),
+                memoryUsage = 0L,
+                isMonitoring = false,
+                protectedAppsCount = 0,
+                accumulatedUptime = 0L
             )
         }
     }
 
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                CHANNEL_ID,
+                "Unkill Service Manager",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Manages Unkill protection services"
+                setShowBadge(false)
+            }
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+    private fun createNotification(): Notification {
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle("Unkill Service Manager")
+            .setContentText("Managing app protection services")
+            .setSmallIcon(android.R.drawable.ic_menu_today)
+            .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setCategory(NotificationCompat.CATEGORY_SERVICE)
+            .build()
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        // Start the service in foreground to comply with Android's foreground service requirements
+        startForeground(NOTIFICATION_ID, createNotification())
+
         when (intent?.action) {
             ACTION_START_SERVICE -> {
-                val serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 1)
-                startServiceInstance(serviceId)
+                val serviceId = intent?.getIntExtra(EXTRA_SERVICE_ID, -1) ?: -1
+                if (serviceId == -1) {
+                    // No specific service ID provided, start services for protected apps
+                    startServicesForProtectedApps()
+                } else {
+                    // Specific service ID provided, start just that instance
+                    startServiceInstance(serviceId)
+                }
             }
             ACTION_STOP_SERVICE -> {
-                val serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 1)
+                val serviceId = intent?.getIntExtra(EXTRA_SERVICE_ID, 1) ?: 1
                 stopServiceInstance(serviceId)
             }
             ACTION_RESTART_SERVICE -> {
-                val serviceId = intent.getIntExtra(EXTRA_SERVICE_ID, 1)
+                val serviceId = intent?.getIntExtra(EXTRA_SERVICE_ID, 1) ?: 1
                 restartServiceInstance(serviceId)
             }
         }
@@ -83,11 +139,28 @@ class UnkillServiceManager : Service() {
         // Stop existing job if any
         serviceJobs[serviceId]?.cancel()
 
-        // Update status
+        // Get the previous status to preserve accumulated uptime
+        val previousStatus = serviceStatuses[serviceId]
+        
+        // Get protected apps count
+        val protectedApps = getProtectedAppsCount()
+
+        // Update status - Initialize with a small initial memory usage to show that monitoring is active
         serviceStatuses[serviceId] = ServiceStatus(
             serviceId = serviceId,
             state = ServiceState.RUNNING,
-            startTime = System.currentTimeMillis()
+            startTime = System.currentTimeMillis(),
+            // If previous memory usage was 0 or no previous status exists, use a small default value
+            memoryUsage = maxOf(previousStatus?.memoryUsage ?: 0L, 1024L), // At least 1KB to avoid "Calculating..."
+            isMonitoring = true,
+            protectedAppsCount = protectedApps,
+            // Accumulate the previous total uptime when starting a new run
+            accumulatedUptime = if (previousStatus?.state == ServiceState.RUNNING) {
+                // If the service was running, preserve its accumulated uptime + the time it was running
+                previousStatus.accumulatedUptime + (System.currentTimeMillis() - previousStatus.startTime)
+            } else {
+                previousStatus?.accumulatedUptime ?: 0L
+            }
         )
 
         // Start monitoring job
@@ -104,10 +177,21 @@ class UnkillServiceManager : Service() {
         serviceJobs[serviceId]?.cancel()
         serviceJobs.remove(serviceId)
 
-        // Update status
+        // Preserve the previous status but change the state to STOPPED
+        val previousStatus = serviceStatuses[serviceId]
         serviceStatuses[serviceId] = ServiceStatus(
             serviceId = serviceId,
-            state = ServiceState.STOPPED
+            state = ServiceState.STOPPED,
+            startTime = previousStatus?.startTime ?: System.currentTimeMillis(),
+            memoryUsage = previousStatus?.memoryUsage ?: 0L,
+            isMonitoring = false,
+            protectedAppsCount = previousStatus?.protectedAppsCount ?: 0,
+            // Update accumulatedUptime to include the time this run was active
+            accumulatedUptime = if (previousStatus?.state == ServiceState.RUNNING) {
+                previousStatus.accumulatedUptime + (System.currentTimeMillis() - previousStatus.startTime)
+            } else {
+                previousStatus?.accumulatedUptime ?: 0L
+            }
         )
     }
 
@@ -120,17 +204,20 @@ class UnkillServiceManager : Service() {
     private suspend fun monitorServiceInstance(serviceId: Int) {
         while (true) {
             try {
-                // Simulate monitoring work
-                delay(5000) // Check every 5 seconds
+                // Update memory usage more frequently initially, then every 5 seconds
+                delay(2000) // Check every 2 seconds for more responsive updates
 
                 // Update memory usage (simulated)
                 val memoryUsage = (Math.random() * 2048 * 1024).toLong() // Up to 2MB
 
                 serviceStatuses[serviceId]?.let { status ->
-                    serviceStatuses[serviceId] = status.copy(
-                        memoryUsage = memoryUsage,
-                        isMonitoring = true
-                    )
+                    if (status.state == ServiceState.RUNNING) { // Only update if still running
+                        serviceStatuses[serviceId] = status.copy(
+                            memoryUsage = memoryUsage,
+                            isMonitoring = true
+                            // Don't update lastUptime here - it should only be updated when service stops
+                        )
+                    }
                 }
 
                 Log.d(TAG, "Service $serviceId monitoring - Memory: ${memoryUsage / 1024}KB")
@@ -148,19 +235,35 @@ class UnkillServiceManager : Service() {
         return try {
             Log.d(TAG, "Installing standalone service $serviceId")
 
+            // Check if service APK already exists and is installed
+            if (isServiceApkInstalled(serviceId)) {
+                Log.d(TAG, "Service $serviceId APK is already installed")
+                return true
+            }
+
             // Create APK file for the specific service
             val apkFile = createServiceApk(serviceId)
-            if (apkFile != null) {
+            if (apkFile != null && apkFile.exists()) {
                 // Install the APK
                 installApk(apkFile, serviceId)
                 true
             } else {
+                Log.e(TAG, "Failed to create APK file for service $serviceId")
                 false
             }
         } catch (e: Exception) {
             Log.e(TAG, "Failed to install standalone service $serviceId", e)
             false
         }
+    }
+
+    fun installAllStandaloneServices(): Map<Int, Boolean> {
+        val results = mutableMapOf<Int, Boolean>()
+        for (serviceId in 1..5) {
+            results[serviceId] = installStandaloneService(serviceId)
+        }
+        Log.d(TAG, "Installation results: $results")
+        return results
     }
 
     private fun createServiceApk(serviceId: Int): File? {
@@ -230,6 +333,17 @@ class UnkillServiceManager : Service() {
         return installedServices
     }
 
+    private fun isServiceApkInstalled(serviceId: Int): Boolean {
+        val context = applicationContext
+        val servicePackageName = "com.example.unkillservice$serviceId"
+        return try {
+            context.packageManager.getPackageInfo(servicePackageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+
     fun startServicesForApps(packageNames: List<String>) {
         Log.d(TAG, "Starting services for ${packageNames.size} apps")
 
@@ -239,6 +353,24 @@ class UnkillServiceManager : Service() {
         for (i in 1..numServices) {
             startServiceInstance(i)
         }
+    }
+
+    // Start services for apps based on saved preferences
+    private fun startServicesForProtectedApps() {
+        val sharedPreferences = applicationContext.getSharedPreferences("unkill_prefs", android.content.Context.MODE_PRIVATE)
+        val protectedPackages = sharedPreferences.getStringSet("protected_apps", emptySet())?.toList() ?: emptyList()
+
+        if (protectedPackages.isNotEmpty()) {
+            Log.d(TAG, "Found ${protectedPackages.size} protected apps to start services for")
+            startServicesForApps(protectedPackages)
+        } else {
+            Log.d(TAG, "No protected apps found in preferences")
+        }
+    }
+
+    private fun getProtectedAppsCount(): Int {
+        val sharedPreferences = applicationContext.getSharedPreferences("unkill_prefs", android.content.Context.MODE_PRIVATE)
+        return sharedPreferences.getStringSet("protected_apps", emptySet())?.size ?: 0
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -251,11 +383,21 @@ class UnkillServiceManager : Service() {
         serviceJobs.values.forEach { it.cancel() }
         serviceJobs.clear()
 
-        // Update all service statuses
+        // Update all service statuses, preserving previous values
         serviceStatuses.keys.forEach { serviceId ->
+            val previousStatus = serviceStatuses[serviceId]
             serviceStatuses[serviceId] = ServiceStatus(
                 serviceId = serviceId,
-                state = ServiceState.STOPPED
+                state = ServiceState.STOPPED,
+                startTime = previousStatus?.startTime ?: System.currentTimeMillis(),
+                memoryUsage = previousStatus?.memoryUsage ?: 0L,
+                isMonitoring = false,
+                protectedAppsCount = previousStatus?.protectedAppsCount ?: 0,
+                accumulatedUptime = if (previousStatus?.state == ServiceState.RUNNING) {
+                    previousStatus.accumulatedUptime + (System.currentTimeMillis() - previousStatus.startTime)
+                } else {
+                    previousStatus?.accumulatedUptime ?: 0L
+                }
             )
         }
     }

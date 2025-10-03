@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.unkill.service2'
+    namespace 'com.example.unkillservice2'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.unkill.service2"
+        applicationId "com.example.unkillservice2"
         minSdk 21
         targetSdk 34
         versionCode 1

@@ -14,8 +14,10 @@ class ServiceStatusAdapter : RecyclerView.Adapter<ServiceStatusAdapter.ServiceVi
     private var serviceStatuses: List<ServiceStatus> = emptyList()
 
     fun updateStatuses(newStatuses: List<ServiceStatus>) {
-        serviceStatuses = newStatuses
-        notifyDataSetChanged()
+        if (serviceStatuses != newStatuses) {
+            serviceStatuses = newStatuses
+            notifyDataSetChanged()
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ServiceViewHolder {
@@ -40,15 +42,23 @@ class ServiceStatusAdapter : RecyclerView.Adapter<ServiceStatusAdapter.ServiceVi
                 tvMemoryUsage.text = serviceStatus.formattedMemoryUsage
                 tvUptime.text = serviceStatus.formattedUptime
 
-                // Set status color
-                val statusColor = when (serviceStatus.state) {
-                    ServiceState.RUNNING -> android.R.color.holo_green_dark
-                    ServiceState.STOPPED -> android.R.color.holo_red_dark
-                    ServiceState.RESTARTING -> android.R.color.holo_orange_dark
-                    ServiceState.IDLE -> android.R.color.darker_gray
+                // Set status color using app's defined colors instead of system colors
+                val statusColorRes = when (serviceStatus.state) {
+                    ServiceState.RUNNING -> com.example.unkill.R.color.status_running
+                    ServiceState.STOPPED -> com.example.unkill.R.color.status_stopped
+                    ServiceState.RESTARTING -> com.example.unkill.R.color.status_restarting
+                    ServiceState.IDLE -> com.example.unkill.R.color.status_idle
                 }
 
-                tvStatus.setTextColor(ContextCompat.getColor(root.context, statusColor))
+                tvStatus.setTextColor(ContextCompat.getColor(root.context, statusColorRes))
+
+                // Ensure text is visible in both light and dark modes
+                // Use a color that contrasts well with both light and dark backgrounds
+                val visibleTextColor = ContextCompat.getColor(root.context, com.example.unkill.R.color.text_on_primary)
+                tvServiceName.setTextColor(visibleTextColor)
+                tvMemoryUsage.setTextColor(visibleTextColor)
+                tvUptime.setTextColor(visibleTextColor)
+                tvProtectedApps.setTextColor(visibleTextColor)
 
                 // Show/hide monitoring indicator
                 ivMonitoring.visibility = if (serviceStatus.isMonitoring)

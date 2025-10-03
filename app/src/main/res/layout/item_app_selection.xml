@@ -23,7 +23,6 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="12dp"
-            android:background="@drawable/ic_launcher_background"
             android:scaleType="centerCrop"
             tools:src="@android:drawable/ic_menu_gallery" />
 
@@ -68,9 +67,7 @@
             android:id="@+id/checkbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:clickable="false"
-            android:focusable="false" />
+            android:layout_marginStart="8dp" />
 
     </LinearLayout>
 

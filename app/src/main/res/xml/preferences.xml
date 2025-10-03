@@ -3,7 +3,7 @@
 
     <PreferenceCategory android:title="Service Configuration">
 
-        <ListPreference
+        <com.example.unkill.preferences.NonNullListPreference
             android:key="service_instances"
             android:title="@string/pref_instances_title"
             android:summary="@string/pref_instances_summary"
@@ -19,21 +19,7 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Battery Optimization">
 
-        <SwitchPreferenceCompat
-            android:key="battery_optimization"
-            android:title="@string/pref_battery_optimization_title"
-            android:summary="@string/pref_battery_optimization_summary"
-            android:defaultValue="true" />
-
-        <Preference
-            android:key="request_battery_optimization"
-            android:title="Request Battery Optimization Exemption"
-            android:summary="Allow Unkill to run without battery restrictions"
-            android:persistent="false" />
-
-    </PreferenceCategory>
 
     <PreferenceCategory android:title="About">
 

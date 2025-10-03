@@ -16,6 +16,7 @@ class AppSelectionAdapter(
     fun updateApps(newApps: List<AppInfo>) {
         apps = newApps
         notifyDataSetChanged()
+        android.util.Log.d("AppSelectionAdapter", "Updated adapter with ${newApps.size} apps, ${newApps.count { it.isProtected }} selected")
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
@@ -42,17 +43,23 @@ class AppSelectionAdapter(
                 // Show system app indicator
                 ivSystemApp.visibility = if (appInfo.isSystemApp) View.VISIBLE else View.GONE
 
-                // Set selection state
-                checkbox.isChecked = appInfo.isProtected
+                android.util.Log.d("AppSelectionAdapter", "Binding app ${appInfo.appName} [${appInfo.packageName}], isProtected=${appInfo.isProtected}")
 
                 // Handle selection changes
                 checkbox.setOnCheckedChangeListener { _, isChecked ->
+                    android.util.Log.d("AppSelectionAdapter", "Checkbox changed for ${appInfo.appName} to $isChecked")
                     onSelectionChanged(appInfo, isChecked)
                 }
 
+                // Set selection state (after setting listener to avoid triggering)
+                checkbox.isChecked = appInfo.isProtected
+                android.util.Log.d("AppSelectionAdapter", "Set checkbox for ${appInfo.appName} to ${appInfo.isProtected}")
+
                 // Handle item clicks
                 container.setOnClickListener {
-                    checkbox.isChecked = !checkbox.isChecked
+                    val newState = !checkbox.isChecked
+                    android.util.Log.d("AppSelectionAdapter", "Container clicked for ${appInfo.appName}, toggling to $newState")
+                    checkbox.isChecked = newState
                 }
             }
         }

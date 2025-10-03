@@ -32,209 +32,68 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <!-- Status Card -->
+            <!-- Debug Scroll Text - 80% of screen -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/status_card"
+                android:id="@+id/debug_card"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:id="@+id/tv_service_status"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Service Status: Stopped"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary" />
-
-                    <TextView
-                        android:id="@+id/tv_active_instances"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Active Instances: 0/5"
-                        android:textSize="14sp"
-                        android:textColor="@color/text_secondary"
-                        android:layout_marginTop="4dp" />
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Main Actions -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/actions_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/status_card">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Quick Actions"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="8dp">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_start_services"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginEnd="8dp"
-                            android:text="Start All Services"
-                            android:textColor="@android:color/white"
-                            app:backgroundTint="@color/status_running"
-                            app:icon="@android:drawable/ic_media_play" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_stop_services"
-                            style="@style/Widget.MaterialComponents.Button"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginStart="8dp"
-                            android:text="Stop All Services"
-                            android:textColor="@android:color/white"
-                            app:backgroundTint="@color/status_stopped"
-                            app:icon="@android:drawable/ic_media_pause" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Navigation Actions -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/navigation_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="8dp"
-                app:cardElevation="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/actions_card">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Management"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="12dp" />
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_select_apps"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/btn_select_apps"
-                            app:icon="@android:drawable/ic_menu_add" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_view_status"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/btn_view_status"
-                            app:icon="@android:drawable/ic_menu_info_details" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_settings"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            android:text="@string/btn_settings"
-                            app:icon="@android:drawable/ic_menu_preferences" />
-
-                        <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_install_standalone"
-                            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/btn_install_standalone"
-                            app:icon="@android:drawable/ic_menu_add"
-                            app:iconTint="@color/primary_color" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Info Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/info_card"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="2dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/navigation_card">
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/toggle_card"
+                app:layout_constraintHeight_percent="0.8">
 
-                <LinearLayout
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"
+                    android:fadeScrollbars="false"
+                    android:fillViewport="true">
 
                     <TextView
+                        android:id="@+id/tv_debug_scroll"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/main_subtitle"
-                        android:textSize="14sp"
+                        android:text="Debug: App started\nStatus: Ready to initialize..."
+                        android:textSize="10sp"
                         android:textColor="@color/text_secondary"
-                        android:textAlignment="center" />
+                        android:padding="12dp"
+                        android:fontFamily="monospace"
+                        android:lineSpacingExtra="1dp" />
 
-                </LinearLayout>
+                </ScrollView>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Main Toggle Button -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/toggle_card"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/debug_card"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_toggle_services"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:text="Start Services"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:backgroundTint="@color/status_running"
+                    app:icon="@android:drawable/ic_media_play"
+                    app:iconGravity="textStart" />
 
             </com.google.android.material.card.MaterialCardView>
 

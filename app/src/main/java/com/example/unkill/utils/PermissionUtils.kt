@@ -9,8 +9,7 @@ import androidx.core.content.ContextCompat
 
 object PermissionUtils {
 
-    private val REQUIRED_PERMISSIONS = arrayOf(
-        android.Manifest.permission.QUERY_ALL_PACKAGES,
+    private val RUNTIME_PERMISSIONS = arrayOf(
         android.Manifest.permission.WAKE_LOCK,
         android.Manifest.permission.FOREGROUND_SERVICE
     )
@@ -18,8 +17,8 @@ object PermissionUtils {
     fun getMissingPermissions(context: Context): List<String> {
         val missingPermissions = mutableListOf<String>()
 
-        // Check runtime permissions
-        for (permission in REQUIRED_PERMISSIONS) {
+        // Check runtime permissions (excluding QUERY_ALL_PACKAGES which is deprecated)
+        for (permission in RUNTIME_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
                 missingPermissions.add(permission)
             }
@@ -31,7 +30,7 @@ object PermissionUtils {
         }
 
         if (!hasIgnoreBatteryOptimizationPermission(context)) {
-            missingPermissions.add("android.settings.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS")
+            missingPermissions.add("android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS")
         }
 
         return missingPermissions
@@ -55,7 +54,11 @@ object PermissionUtils {
 
     fun hasIgnoreBatteryOptimizationPermission(context: Context): Boolean {
         val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-        return powerManager.isIgnoringBatteryOptimizations(context.packageName)
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            powerManager.isIgnoringBatteryOptimizations(context.packageName)
+        } else {
+            true // Assume granted on older versions
+        }
     }
 
     fun requestIgnoreBatteryOptimization(context: Context) {
@@ -85,14 +88,14 @@ object PermissionUtils {
 
     fun getPermissionDescription(permission: String): String {
         return when (permission) {
-            android.Manifest.permission.QUERY_ALL_PACKAGES ->
-                "Required to access installed apps for protection selection"
             android.Manifest.permission.WAKE_LOCK ->
                 "Required to keep services running when device is idle"
             android.Manifest.permission.FOREGROUND_SERVICE ->
                 "Required to run persistent background services"
             android.Manifest.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS ->
                 "Required to prevent battery optimization from killing services"
+            "android.permission.PACKAGE_USAGE_STATS" ->
+                "Required to monitor app usage patterns"
             "Usage Stats Permission" ->
                 "Required to monitor app usage patterns"
             "Ignore Battery Optimization" ->

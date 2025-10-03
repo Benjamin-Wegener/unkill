@@ -18,13 +18,14 @@
 
 ## 🎯 Overview
 
-**Unkill** is a sophisticated Android application designed to protect user-selected apps from being terminated by aggressive battery optimization, memory management, or task killers. Using a revolutionary **distributed, self-replicating service architecture**, Unkill creates multiple lightweight service instances that monitor each other and automatically restart any terminated processes.
+**Unkill** is a sophisticated Android application designed to protect user-selected apps from being terminated by aggressive battery optimization, memory management, or task killers. The framework installs **5 standalone service APKs** with different package names that have identical functionality to restart protected apps and monitor each other for maximum resilience.
 
 ### 🔥 Key Features
 
-- **🛡️ Multi-Layer Protection**: Up to 5 distributed service instances with mutual monitoring
-- **💀 Standalone Services**: Services can be installed as separate APK files for enhanced resilience
-- **🔄 Auto-Recovery**: Automatic detection and restart of killed services
+- **🛡️ Multi-Layer Protection**: 5 standalone service APKs with identical functionality and mutual monitoring
+- **💀 Distributed Architecture**: Different package names (`com.example.unkill.service1-5`) for enhanced resilience  
+- **🔄 Auto-Recovery**: All services monitor each other and restart killed services automatically
+- **🔄 App Protection**: All services access shared protected app list and restart killed apps
 - **⚡ Lightweight**: Each service instance uses <5MB of memory
 - **🔋 Battery Efficient**: Minimal battery impact (<2% additional consumption)
 - **📱 Universal Compatibility**: Supports 90%+ of Android devices (API 21+)
@@ -58,11 +59,15 @@
 
 ### Basic Usage
 
-1. **Launch Unkill** and grant required permissions
-2. **Select Apps** to protect from the app list
-3. **Start Services** to begin protection
-4. **Install Standalone Services** (optional) for enhanced protection
-5. **Monitor** service status in real-time
+1. **Launch Unkill** - The app will automatically prompt for required permissions on first startup:
+   - **Battery Optimization**: Allow "Don't optimize" to prevent the system from killing services
+   - **Usage Access**: Allow "Permit usage access" to monitor app behavior
+   - **Installation Permission**: Allow installation of standalone service APKs
+2. **Grant Permissions** - Follow the on-screen prompts to enable all required permissions
+3. **Select Apps** to protect from the app list
+4. **Deploy Services** - Install all 5 standalone service APKs with different package names
+5. **Monitor** service status in real-time - each service can restart protected apps independently
+6. **All services** share the same protected app list from main app
 
 ---
 
@@ -70,22 +75,28 @@
 
 ### Service Distribution Strategy
 
+The Unkill framework creates a distributed protection network:
+
 ```
 Main App (com.example.unkill)
-├── 🛠️ UnkillServiceManager (Coordinator)
-├── 💀 UnkillService1 (com.example.unkill.service1) ← Standalone APK
-├── 💀 UnkillService2 (com.example.unkill.service2) ← Standalone APK
-├── 💀 UnkillService3 (com.example.unkill.service3) ← Standalone APK
-├── 💀 UnkillService4 (com.example.unkill.service4) ← Standalone APK
-└── 💀 UnkillService5 (com.example.unkill.service5) ← Standalone APK
+├── 🛠️ App Selection Interface
+├── 💾 Stores protected app list
+├── 📦 Deploys 5 standalone service APKs
+│
+├── 💀 Service1 (com.example.unkill.service1) ← Standalone APK
+├── 💀 Service2 (com.example.unkill.service2) ← Standalone APK  
+├── 💀 Service3 (com.example.unkill.service3) ← Standalone APK
+├── 💀 Service4 (com.example.unkill.service4) ← Standalone APK
+└── 💀 Service5 (com.example.unkill.service5) ← Standalone APK
 ```
 
 ### Protection Mechanism
 
-- **Mutual Monitoring**: Each service instance monitors others
-- **Cross-Process Communication**: Services communicate across different APK boundaries
-- **Automatic Recovery**: Killed services are automatically restarted
-- **Load Distribution**: Protection workload distributed across instances
+- **Equal Functionality**: All 5 service APKs have identical capability to restart protected apps
+- **Mutual Monitoring**: Each service monitors and restarts other services if killed
+- **Cross-Process Resilience**: Different package names avoid unified system optimization
+- **Shared Protection Data**: All services access the protected app list from main app
+- **Automatic Recovery**: Killed apps and services are automatically restarted
 
 ---
 
@@ -97,17 +108,19 @@ Main App (com.example.unkill)
 
 ### ✅ v1.0.0 - Core Functionality (Q1 2024)
 - [x] **Basic app framework** with MIT license
-- [x] **User interface** for selecting target apps/activities to protect
-- [x] **Service cloning mechanism** (up to 5 instances)
-- [x] **Dynamic package naming** (`com.example.unkill.service1`, etc.)
+- [x] **User interface** for selecting apps to protect
+- [x] **Service architecture** with 5 standalone APK services
+- [x] **Different package names** (`com.example.unkill`, `com.example.unkill.service1-5`)
+- [x] **Equal service functionality** - all services can restart protected apps
 - [x] **Mutual monitoring** between service instances
 - [x] **Auto-restart functionality** for killed services
 - [x] **Low memory footprint** optimization (<5MB per instance)
 - [x] **Android API compatibility** (API 21+ covering 90%+ devices)
 
 ### 🚧 v1.1.0 - Enhanced Protection & Reliability (Q2 2024)
+- [x] Mutual monitoring between services - each service monitors and restarts other services when killed
+- [x] All services can restart protected apps from shared list
 - [ ] Improved battery optimization bypass techniques (with user consent)
-- [ ] Foreground service implementation for better persistence
 - [ ] Reduced CPU/memory usage during idle monitoring
 - [ ] User-configurable number of active instances (1–5)
 - [ ] Visual status indicators for each service instance
@@ -120,34 +133,65 @@ Main App (com.example.unkill)
 - [ ] Crash reporting & self-healing logic
 - [ ] Dark mode support and UI polish
 
+### 🏗️ Architecture Overview
+
+The Unkill framework deploys 5 standalone service APKs that work together:
+
+1. **Main App** (`com.example.unkill`): User interface and app selection
+2. **Service 1-5** (`com.example.unkill.service1` to `com.example.unkill.service5`): 
+   - Identical functionality, different package names
+   - Each can restart protected apps saved from main app
+   - Mutual monitoring to restart each other if killed
+   - Cross-process resilience against system optimizations
+
 ---
 
 ## 🔧 Technical Specifications
 
 ### System Requirements
 - **Minimum API Level**: 21 (Android 5.0 Lollipop)
-- **Target API Level**: Latest stable
+- **Target API Level**: 34 (Android 14)
 - **Memory Footprint**: <5MB per service instance
-- **Battery Impact**: Minimal (<2% additional battery consumption)
+- **Battery Impact**: Minimal (<2% additional consumption)
 - **Storage**: <10MB total application size
 
 ### Required Permissions
 ```xml
 <!-- Core Functionality -->
-<uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
 <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"
+    tools:ignore="ForegroundServicePermission" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 <!-- Battery Optimization Bypass -->
 <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
 <!-- Usage Statistics Access -->
-<uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" />
+<uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+    tools:ignore="ProtectedPermissions" />
 
 <!-- Standalone Service Installation -->
 <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"
     tools:ignore="ProtectedPermissions" />
 ```
+
+### Package Query Declaration
+```xml
+<!-- Query all packages to access installed apps for protection -->
+<queries>
+    <intent>
+        <action android:name="android.intent.action.MAIN" />
+    </intent>
+</queries>
+```
+
+### Permission Necessity
+- **FOREGROUND_SERVICE**: Required for persistent background protection
+- **WAKE_LOCK**: Keeps services alive during device idle periods
+- **REQUEST_IGNORE_BATTERY_OPTIMIZATIONS**: Prevents system from killing services
+- **PACKAGE_USAGE_STATS**: Accesses app usage statistics for monitoring
+- **REQUEST_INSTALL_PACKAGES**: Installs the 5 standalone service APKs
+- **FOREGROUND_SERVICE_SPECIAL_USE**: Required for special use foreground services
 
 ### Compatibility Goals
 - ✅ **90%+ Device Coverage**: Supports all modern Android devices
@@ -196,11 +240,35 @@ unkill/
 │   │   ├── res/                 # Resources (layouts, strings, etc.)
 │   │   └── AndroidManifest.xml  # Main App Manifest
 │   └── build.gradle             # App-level build config
-├── service1/ to service5/       # Standalone Service Modules
+├── service1/                    # Standalone Service Module 1
 │   ├── src/main/
-│   │   ├── java/com/example/unkill/serviceX/
-│   │   │   └── UnkillServiceX.kt # Individual service implementation
-│   │   └── AndroidManifest.xml  # Service-specific manifest
+│   │   ├── java/com/example/unkill/service1/  # Different package name
+│   │   │   └── UnkillService1.kt              # Identical service logic
+│   │   └── AndroidManifest.xml  # Service-specific manifest with unique package
+│   └── build.gradle             # Service build config
+├── service2/                    # Standalone Service Module 2
+│   ├── src/main/
+│   │   ├── java/com/example/unkill/service2/  # Different package name  
+│   │   │   └── UnkillService2.kt              # Identical service logic
+│   │   └── AndroidManifest.xml  # Service-specific manifest with unique package
+│   └── build.gradle             # Service build config
+├── service3/                    # Standalone Service Module 3
+│   ├── src/main/
+│   │   ├── java/com/example/unkill/service3/  # Different package name
+│   │   │   └── UnkillService3.kt              # Identical service logic
+│   │   └── AndroidManifest.xml  # Service-specific manifest with unique package
+│   └── build.gradle             # Service build config
+├── service4/                    # Standalone Service Module 4
+│   ├── src/main/
+│   │   ├── java/com/example/unkill/service4/  # Different package name
+│   │   │   └── UnkillService4.kt              # Identical service logic
+│   │   └── AndroidManifest.xml  # Service-specific manifest with unique package
+│   └── build.gradle             # Service build config
+├── service5/                    # Standalone Service Module 5
+│   ├── src/main/
+│   │   ├── java/com/example/unkill/service5/  # Different package name
+│   │   │   └── UnkillService5.kt              # Identical service logic
+│   │   └── AndroidManifest.xml  # Service-specific manifest with unique package
 │   └── build.gradle             # Service build config
 └── build.gradle                 # Root build config
 ```

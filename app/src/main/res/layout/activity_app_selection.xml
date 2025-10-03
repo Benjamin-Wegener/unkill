@@ -28,6 +28,39 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <!-- Search Field -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Search apps"
+                    app:startIconDrawable="@android:drawable/ic_menu_search">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/search_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Selection Controls -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -100,70 +133,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:visibility="gone" />
-
-        <!-- Debug Log Section -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:layout_margin="16dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="8dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="4dp">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Debug Log"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/text_primary" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_clear_log"
-                        style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Clear"
-                        android:textSize="10sp"
-                        android:minWidth="0"
-                        android:minHeight="0"
-                        android:padding="4dp" />
-
-                </LinearLayout>
-
-                <ScrollView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:scrollbars="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_debug_log"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Debug log will appear here...\n"
-                        android:textSize="10sp"
-                        android:textColor="@color/text_secondary"
-                        android:fontFamily="monospace"
-                        android:background="@android:color/transparent" />
-
-                </ScrollView>
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
 
         <!-- Action Button -->
         <com.google.android.material.card.MaterialCardView

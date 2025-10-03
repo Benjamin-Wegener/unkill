@@ -5,6 +5,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import android.text.Editable
+import android.text.TextWatcher
 import com.example.unkill.adapters.AppSelectionAdapter
 import com.example.unkill.databinding.ActivityAppSelectionBinding
 import com.example.unkill.viewmodels.AppSelectionViewModel
@@ -22,6 +24,7 @@ class AppSelectionActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupToolbar()
+        setupSearchInput()
         setupRecyclerView()
         setupButtons()
         observeViewModel()
@@ -32,6 +35,18 @@ class AppSelectionActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Select Apps to Protect"
+    }
+
+    private fun setupSearchInput() {
+        binding.searchInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.searchApps(s?.toString() ?: "")
+            }
+        })
     }
 
     private fun setupRecyclerView() {
@@ -47,6 +62,9 @@ class AppSelectionActivity : AppCompatActivity() {
 
     private fun setupButtons() {
         binding.btnProtectSelected.setOnClickListener {
+            android.util.Log.d("AppSelectionActivity", "Protect selected button clicked")
+            // Add debugging to see current state before calling protectSelectedApps
+            android.util.Log.d("AppSelectionActivity", "Current selected count: ${viewModel.selectedCount.value}")
             viewModel.protectSelectedApps()
         }
 
@@ -57,16 +75,12 @@ class AppSelectionActivity : AppCompatActivity() {
         binding.btnDeselectAll.setOnClickListener {
             viewModel.deselectAllApps()
         }
-
-        binding.btnClearLog.setOnClickListener {
-            viewModel.clearDebugLog()
-        }
     }
 
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.apps.collect { apps ->
-                adapter.updateApps(apps)
+            viewModel.filteredApps.collect { filteredApps ->
+                adapter.updateApps(filteredApps)
             }
         }
 
@@ -87,8 +101,8 @@ class AppSelectionActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.errorMessage.collect { message ->
                 if (message.isNotEmpty()) {
-                    // Error messages are now logged to debug log instead of showing toasts
                     android.util.Log.w("AppSelectionActivity", "Error: $message")
+                    viewModel.clearErrorMessage()
                 }
             }
         }
@@ -96,20 +110,8 @@ class AppSelectionActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.protectionComplete.collect { isComplete ->
                 if (isComplete) {
-                    // Success message is now logged to debug log instead of showing toast
                     android.util.Log.i("AppSelectionActivity", "Protection complete - finishing activity")
                     finish()
-                }
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.debugLog.collect { logContent ->
-                binding.tvDebugLog.text = logContent
-                // Auto-scroll to bottom
-                binding.tvDebugLog.post {
-                    val scrollView = binding.tvDebugLog.parent as? android.widget.ScrollView
-                    scrollView?.fullScroll(android.view.View.FOCUS_DOWN)
                 }
             }
         }

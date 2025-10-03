@@ -10,7 +10,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimary</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">true</item>
     </style>
 
     <style name="Theme.Unkill.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.unkill.models.ServiceStatus
 import com.example.unkill.services.UnkillServiceManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -23,18 +24,53 @@ class ServiceStatusViewModel(application: Application) : AndroidViewModel(applic
     private val _actionComplete = MutableStateFlow(false)
     val actionComplete: StateFlow<Boolean> = _actionComplete
 
+    private var isObserverStarted = false
+
     fun loadServiceStatuses() {
         _isLoading.value = true
         _errorMessage.value = ""
 
         viewModelScope.launch {
             try {
+                // Ensure service manager is initialized
+                val context = getApplication<Application>().applicationContext
+                UnkillServiceManager.getInstance(context)
+
                 val statuses = UnkillServiceManager.getAllServiceStatuses()
-                _serviceStatuses.value = statuses.values.toList().sortedBy { it.serviceId }
+                val sortedStatuses = statuses.values.toList().sortedBy { it.serviceId }
+                val newList = sortedStatuses.toList() // Force new list creation
+
+                _serviceStatuses.value = newList
             } catch (e: Exception) {
                 _errorMessage.value = "Failed to load service statuses: ${e.message}"
             } finally {
                 _isLoading.value = false
+            }
+        }
+
+        // Start observing for status updates (only once)
+        if (!isObserverStarted) {
+            startStatusObserver()
+            isObserverStarted = true
+        }
+    }
+
+    private fun startStatusObserver() {
+        viewModelScope.launch {
+            try {
+                while (true) {
+                    delay(2000) // Update every 2 seconds
+                    val statuses = UnkillServiceManager.getAllServiceStatuses()
+                    val sortedStatuses = statuses.values.toList().sortedBy { it.serviceId }
+                    val newList = sortedStatuses.toList() // Force new list creation
+
+                    _serviceStatuses.value = newList
+                }
+            } catch (e: Exception) {
+                if (e !is kotlinx.coroutines.CancellationException) {
+                    _errorMessage.value = "Failed to update service statuses: ${e.message}"
+                }
+                // The coroutine will naturally end when cancelled
             }
         }
     }

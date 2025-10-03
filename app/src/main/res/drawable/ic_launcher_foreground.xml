@@ -1,47 +1,73 @@
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-  <!-- Skull background -->
-  <path android:fillColor="#1a1a1a"
-      android:pathData="M0,0h108v108h-108z"/>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <!-- Skull outline -->
-  <path android:fillColor="#00000000"
-      android:pathData="M9,0L9,108L99,108L99,0"
-      android:strokeWidth="1"
-      android:strokeColor="#333333"/>
+  <!-- Gradient green circular background -->
+  <item>
+    <shape android:shape="oval">
+      <gradient
+          android:type="linear"
+          android:angle="90"
+          android:startColor="#8BC34A"
+          android:endColor="#2E7D32"/>
+    </shape>
+  </item>
 
-  <!-- Main skull shape -->
-  <path android:fillColor="#f5f5f5"
-      android:pathData="M20,25L88,25L88,75Q88,85 78,85L30,85Q20,85 20,75Z"/>
+  <!-- Ghost vector -->
+  <item>
+    <vector
+        android:width="200dp"
+        android:height="200dp"
+        android:viewportWidth="200"
+        android:viewportHeight="200">
 
-  <!-- Eye sockets -->
-  <path android:fillColor="#000000"
-      android:pathData="M30,40L42,40L42,52L30,52Z"/>
-  <path android:fillColor="#000000"
-      android:pathData="M58,40L70,40L70,52L58,52Z"/>
+      <!-- Body -->
+      <path android:fillColor="#FFFFFF"
+          android:pathData="
+M70,50
+C78,20 122,20 130,50
+C136,75 124,78 124,110
+C124,155 165,175 120,155
+C115,175 105,175 100,155
+C95,175 85,175 80,155
+C35,175 76,155 76,110
+C76,78 64,75 70,50
+Z" />
 
-  <!-- Eye highlights -->
-  <path android:fillColor="#ffffff"
-      android:pathData="M31,41L35,41L35,45L31,45Z"/>
-  <path android:fillColor="#ffffff"
-      android:pathData="M59,41L63,41L63,45L59,45Z"/>
+      <!-- Left arm: lowered -->
+      <path
+          android:fillColor="#FFFFFF"
+          android:pathData="
+M76,101
+C62,106 62,118 76,120
+C82,116 82,106 76,101
+Z" />
 
-  <!-- Nasal cavity -->
-  <path android:fillColor="#000000"
-      android:pathData="M45,50L50,50L50,65L48,68L46,68L44,65L44,50Z"/>
+      <!-- Right arm: lowered -->
+      <path
+          android:fillColor="#FFFFFF"
+          android:pathData="
+M124,101
+C138,106 138,118 124,120
+C118,116 118,106 124,101
+Z" />
 
-  <!-- Teeth -->
-  <path android:fillColor="#ffffff"
-      android:pathData="M25,70L83,70L83,75L25,75Z"/>
-  <path android:fillColor="#000000"
-      android:pathData="M25,70L30,70L30,75L25,75ZM32,70L37,70L37,75L32,75ZM39,70L44,70L44,75L39,75ZM46,70L51,70L51,75L46,75ZM53,70L58,70L58,75L53,75ZM60,70L65,70L65,75L60,75ZM67,70L72,70L72,75L67,75ZM74,70L79,70L79,75L74,75ZM81,70L83,70L83,75L81,75Z"/>
+      <!-- Left eye -->
+      <path
+          android:fillColor="#000000"
+          android:pathData="M90.4,64 a6.3,10 0 1,1 0.1,0 z" />
 
-  <!-- Jaw line -->
-  <path android:fillColor="#00000000"
-      android:pathData="M20,75Q54,80 88,75"
-      android:strokeWidth="2"
-      android:strokeColor="#cccccc"/>
-</vector>
+      <!-- Right eye -->
+      <path
+          android:fillColor="#000000"
+          android:pathData="M109.6,64 a6.3,10 0 1,1 0.1,0 z" />
+
+      <!-- Smile -->
+      <path
+          android:fillColor="@android:color/transparent"
+          android:strokeColor="#000000"
+          android:strokeWidth="3"
+          android:strokeLineCap="round"
+          android:pathData="M85.6,74 C95,86 105,86 114.4,74" />
+
+    </vector>
+  </item>
+</layer-list>

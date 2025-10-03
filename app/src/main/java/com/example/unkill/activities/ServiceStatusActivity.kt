@@ -36,9 +36,11 @@ class ServiceStatusActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         adapter = ServiceStatusAdapter()
+        android.util.Log.d("ServiceStatusActivity", "Setting up RecyclerView with adapter")
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(this@ServiceStatusActivity)
             adapter = this@ServiceStatusActivity.adapter
+            android.util.Log.d("ServiceStatusActivity", "RecyclerView adapter set, item count: ${this@ServiceStatusActivity.adapter.itemCount}")
         }
     }
 
@@ -57,12 +59,18 @@ class ServiceStatusActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
+        // Observe service statuses
         lifecycleScope.launch {
             viewModel.serviceStatuses.collect { statuses ->
+                android.util.Log.d("ServiceStatusActivity", "Received ${statuses.size} service statuses")
+                statuses.forEach { status ->
+                    android.util.Log.d("ServiceStatusActivity", "Service ${status.serviceId}: ${status.state}, Memory: ${status.formattedMemoryUsage}, Uptime: ${status.formattedUptime}")
+                }
                 adapter.updateStatuses(statuses)
             }
         }
 
+        // Observe loading state
         lifecycleScope.launch {
             viewModel.isLoading.collect { isLoading ->
                 binding.progressBar.visibility = if (isLoading)
@@ -70,14 +78,16 @@ class ServiceStatusActivity : AppCompatActivity() {
             }
         }
 
+        // Observe error messages
         lifecycleScope.launch {
             viewModel.errorMessage.collect { message ->
                 if (message.isNotEmpty()) {
-                    android.widget.Toast.makeText(this@ServiceStatusActivity, message, android.widget.Toast.LENGTH_SHORT).show()
+                    android.util.Log.e("ServiceStatusActivity", "Error: $message")
                 }
             }
         }
 
+        // Observe action completion
         lifecycleScope.launch {
             viewModel.actionComplete.collect { isComplete ->
                 if (isComplete) {

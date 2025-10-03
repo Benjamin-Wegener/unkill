@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:text="Status: "
                 android:textSize="14sp"
-                android:textColor="@color/text_secondary" />
+                android:textColor="@color/text_on_primary" />
 
             <TextView
                 android:id="@+id/tv_status"
@@ -61,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textStyle="bold"
+                android:textColor="@color/text_on_primary"
                 tools:text="RUNNING" />
 
         </LinearLayout>
@@ -77,14 +78,14 @@
                 android:layout_height="wrap_content"
                 android:text="Memory: "
                 android:textSize="14sp"
-                android:textColor="@color/text_secondary" />
+                android:textColor="@color/text_on_primary" />
 
             <TextView
                 android:id="@+id/tv_memory_usage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/text_on_primary"
                 tools:text="1.2 MB" />
 
         </LinearLayout>
@@ -101,14 +102,14 @@
                 android:layout_height="wrap_content"
                 android:text="Uptime: "
                 android:textSize="14sp"
-                android:textColor="@color/text_secondary" />
+                android:textColor="@color/text_on_primary" />
 
             <TextView
                 android:id="@+id/tv_uptime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/text_on_primary"
                 tools:text="2h 15m" />
 
         </LinearLayout>
@@ -124,14 +125,14 @@
                 android:layout_height="wrap_content"
                 android:text="Protected Apps: "
                 android:textSize="14sp"
-                android:textColor="@color/text_secondary" />
+                android:textColor="@color/text_on_primary" />
 
             <TextView
                 android:id="@+id/tv_protected_apps"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
-                android:textColor="@color/text_primary"
+                android:textColor="@color/text_on_primary"
                 tools:text="5 apps" />
 
         </LinearLayout>
